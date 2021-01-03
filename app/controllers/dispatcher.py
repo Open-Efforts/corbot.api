@@ -3,6 +3,7 @@ import datetime
 import requests
 
 from app import metadata, session
+
 # import app.controllers.test  # noqa 401
 # import app.controllers.runner  # noqa 401
 from app.logger import log
@@ -10,7 +11,6 @@ from sqlalchemy import *
 from imdb import IMDb
 from loguru import logger
 from .wiki import SVC_Wikipedia
-from .bn import SVC_BN
 from .link import SVC_Link
 from .google import SVC_Google
 from .lyrics import SVC_Lyrics
@@ -19,7 +19,6 @@ from .info import SVC_Info
 from .musicmap import SVC_MusicMap
 from .news import SVC_News
 from .rss import SVC_RSS
-from .scores import SVC_Scores
 from .sports import SVC_Rundown
 from .twitter import SVC_Twitter
 from .account import SVC_Account
@@ -163,8 +162,7 @@ def cmd_crypto(phrase):
         body_text += "Bitcoin [BTC]: " + str(plan_row["btc"]) + "[EOL]"
         body_text += "Ethereum [ETH]: " + str(plan_row["eth"]) + "[EOL]"
         body_text += "Ripple [XRP]: " + str(plan_row["xrp"]) + "[EOL]"
-        body_text += "Bitcoin Cash [BCH]: " + \
-            str(plan_row["bch"]) + "[EOL]"
+        body_text += "Bitcoin Cash [BCH]: " + str(plan_row["bch"]) + "[EOL]"
         body_text += "Litecoin [LTC]: " + str(plan_row["ltc"]) + "[EOL]"
         body_text += "Monero [XMR]: " + str(plan_row["xmr"]) + "[EOL]"
         body_text += "[EOL]"
@@ -181,14 +179,7 @@ def cmd_crypto(phrase):
         btc_av = str(round(row["btc_av"], 4))
         btc_av = btc_av.ljust(9, "0")
         body_text += (
-            str(row["day"])
-            + " | "
-            + btc_lw
-            + " | "
-            + btc_hi
-            + " | "
-            + btc_av
-            + "[EOL]"
+            str(row["day"]) + " | " + btc_lw + " | " + btc_hi + " | " + btc_av + "[EOL]"
         )
     body_text += "----------------Ethereum 10 Day ------------------[EOL]"
     body_text += "---Date----|--ETH lw---|--ETH hi---|--ETH av--[EOL]"
@@ -203,14 +194,7 @@ def cmd_crypto(phrase):
         eth_av = str(round(row["eth_av"], 4))
         eth_av = eth_av.ljust(9, "0")
         body_text += (
-            str(row["day"])
-            + " | "
-            + eth_lw
-            + " | "
-            + eth_hi
-            + " | "
-            + eth_av
-            + "[EOL]"
+            str(row["day"]) + " | " + eth_lw + " | " + eth_hi + " | " + eth_av + "[EOL]"
         )
     return body_text
 
@@ -280,9 +264,7 @@ def cmd_imdb(arg):
                 "To look up one of these actors, just send back a message with the subject: imdb:"
                 + "\r\n"
             )
-            text_data += (
-                "In the body type:      movie, Actor_ID    example:" + "\r\n"
-            )
+            text_data += "In the body type:      movie, Actor_ID    example:" + "\r\n"
             text_data += "actor, 0073195" + "\r\n" * 2
             text_data += actors
         except Exception as E:
@@ -312,17 +294,14 @@ def cmd_imdb(arg):
                 movie_row = movie_row.replace("(:", "")
                 movie_row = movie_row.replace("):", "")
                 movie_row = movie_row.replace(") ,", ")")
-                movies += movie_row[10:] + \
-                    "[" + movie_row[0:7] + "]" + " | "
+                movies += movie_row[10:] + "[" + movie_row[0:7] + "]" + " | "
             text_data = "Films this actor was in: " + "\r\n" + movies
             text_data += (
                 "\r\n" * 2
                 + "To look up these movies, just send back a message with the subject: imdb:"
                 + "\r\n"
             )
-            text_data += (
-                "In the body type:      movie, Movie_ID     example:" + "\r\n"
-            )
+            text_data += "In the body type:      movie, Movie_ID     example:" + "\r\n"
             text_data += "movie, 0073195"
         except:
             text_data = "This number is invalid, please check the number."
@@ -374,21 +353,17 @@ def cmd_imdb(arg):
                 movie_row = movie_row.replace("[:", "")
                 movie_row = movie_row.replace("]:", "")
                 movie_row = movie_row.replace(",)", "]")
-                movie_row = movie_row[10:] + \
-                    "[" + movie_row[0:7] + "]" + " | "
+                movie_row = movie_row[10:] + "[" + movie_row[0:7] + "]" + " | "
                 movie_row = movie_row.replace("[]", "")
                 movies += movie_row.replace(") , [", ") [")
             text_data += (
-                "Here are the films that " +
-                str(first_result) + " was in:" + "\r\n"
+                "Here are the films that " + str(first_result) + " was in:" + "\r\n"
             )
             text_data += (
                 "To look up these movies, just send back a message with the subject: imdb:"
                 + "\r\n"
             )
-            text_data += (
-                "In the body type:      movie, Movie_ID     example:" + "\r\n"
-            )
+            text_data += "In the body type:      movie, Movie_ID     example:" + "\r\n"
             text_data += "movie, 0073195" + "\r\n" * 2
             text_data += movies
             text_data += (
@@ -398,14 +373,11 @@ def cmd_imdb(arg):
                 "To look up one of these actors, just send back a message with the subject: imdb:"
                 + "\r\n"
             )
-            text_data += (
-                "In the body type:      movie, Actor_ID    example:" + "\r\n"
-            )
+            text_data += "In the body type:      movie, Actor_ID    example:" + "\r\n"
             text_data += "actor, 0073195" + "\r\n" * 2
             text_data += actors
         except:
-            logger.info(
-                "No actor by this name, please check the spelling.")
+            logger.info("No actor by this name, please check the spelling.")
     #######################
 
     elif movie_request[0] == "movie":
@@ -429,8 +401,7 @@ def cmd_imdb(arg):
                 movie_row = movie_row.replace("[:", "")
                 movie_row = movie_row.replace("]:", "")
                 movie_row = movie_row.replace(",)", "]")
-                movie_row = movie_row[10:] + \
-                    "[" + movie_row[0:7] + "]" + " | "
+                movie_row = movie_row[10:] + "[" + movie_row[0:7] + "]" + " | "
                 movie_row = movie_row.replace("[] ", "")
                 movies += movie_row.replace(") , [", ") [")
 
@@ -476,23 +447,18 @@ def cmd_imdb(arg):
                 "To look up one of these actors, just send back a message with the subject: imdb:"
                 + "\r\n"
             )
-            text_data += (
-                "In the body type:      movie, Actor_ID    example:" + "\r\n"
-            )
+            text_data += "In the body type:      movie, Actor_ID    example:" + "\r\n"
             text_data += "actor, 0073195" + "\r\n" + "\r\n"
             text_data += "Actors: " + actors + "\r\n" + "\r\n"
             text_data += (
                 "To look up these other movies, just send back a message with the subject: imdb:"
                 + "\r\n"
             )
-            text_data += (
-                "In the body type:      movie, Movie_ID     example:" + "\r\n"
-            )
+            text_data += "In the body type:      movie, Movie_ID     example:" + "\r\n"
             text_data += "movie, 0073195" + "\r\n" + "\r\n"
             text_data += movies
         except:
-            logger.info(
-                "No movie by this name, please check the spelling.")
+            logger.info("No movie by this name, please check the spelling.")
 
     return text_data
 
@@ -508,13 +474,12 @@ MAP = {
     "google": SVC_Google.cmd_google,
     "twitter": SVC_Twitter.cmd_twitter,
     "sports": SVC_Rundown.cmd_odds,
-    "scores": SVC_Scores.cmd_scores,
+    "scores": SVC_Rundown.cmd_scores,
     "rss": SVC_RSS.cmd_rss,
     "musicmap": SVC_MusicMap.cmd_musicmap,
     "info": SVC_Info.cmd_info,
     "amazon": SVC_Amazon.cmd_amazon,
     "lyrics": SVC_Lyrics.cmd_lyrics,
-    "bn": SVC_BN.cmd_bn,
     "account": SVC_Account.cmd_account,
 }
 
@@ -536,18 +501,18 @@ def dispatch(method_name: str, body: str, reg_num: str):
                 subject, data = method(reg_num)
                 return dict(
                     request=method_name_ident,
-                    data=data.replace('\r\r', '\n\n').replace('\r', '\n'),
+                    data=data.replace("\r\r", "\n\n").replace("\r", "\n"),
                     indent=4,
                     sort_keys=True,
-                    default=str
+                    default=str,
                 )
             else:
                 return dict(
                     request=method_name_ident,
-                    data=method(body).replace('\r\n', '\n'),
+                    data=method(body).replace("\r\n", "\n"),
                     indent=4,
                     sort_keys=True,
-                    default=str
+                    default=str,
                 )
         except Exception as e:
             log(log.ERROR, e)
@@ -558,37 +523,34 @@ def dispatch(method_name: str, body: str, reg_num: str):
     else:
         client_id = Runner.get_client_id(reg_num)
         if method_name in human_svcs:
-            return dict(client_id=client_id, svc_feature='human', expired=comm(client_id))
+            return dict(
+                client_id=client_id, svc_feature="human", expired=comm(client_id)
+            )
         contact_name = CB.unparse_contact_name(method_name)
         if contact_name:
             found, contact_data = CB.check_contact(client_id, contact_name)
             if found == 1:
-                if contact_data['contact_type'] == 'number':
-                    svc_feature = 'sms'
+                if contact_data["contact_type"] == "number":
+                    svc_feature = "sms"
                 else:
-                    svc_feature = contact_data['contact_type']
+                    svc_feature = contact_data["contact_type"]
                 return dict(
                     client_id=client_id,
                     svc_feature=svc_feature,
-                    expired=comm(client_id)
+                    expired=comm(client_id),
                 )
             else:
                 return dict(
                     client_id=client_id,
                     svc_feature="No such contact for this user",
-                    expired=comm(client_id)
+                    expired=comm(client_id),
                 )
-        elif '@' in method_name:
+        elif "@" in method_name:
             return dict(
-                client_id=client_id,
-                svc_feature="email",
-                expired=comm(client_id)
+                client_id=client_id, svc_feature="email", expired=comm(client_id)
             )
         elif method_name.isdigit():
-            return dict(
-                client_id=client_id,
-                svc_feature="sms",
-                expired=comm(client_id)
-            )
+            return dict(client_id=client_id, svc_feature="sms", expired=comm(client_id))
         else:
-            raise NameError('Such service is not supported')
+            raise NameError("Such service is not supported")
+

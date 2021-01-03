@@ -10,3 +10,6 @@ env/
 *.pyc
 /*.sqlite3
 logs/
+
+bin
+lib
