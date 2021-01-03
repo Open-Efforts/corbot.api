@@ -18,6 +18,34 @@
                 "run"
             ],
             "jinja": true
+        },
+        {
+            "name": "read log",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "wsgi:app",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "read-log"
+            ],
+        },
+        {
+            "name": "replay",
+            "type": "python",
+            "request": "launch",
+            "module": "flask",
+            "env": {
+                "FLASK_APP": "wsgi:app",
+                "FLASK_ENV": "development",
+                "FLASK_DEBUG": "1"
+            },
+            "args": [
+                "replay"
+            ],
         }
     ]
 }
