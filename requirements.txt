@@ -30,13 +30,14 @@ html2text==2020.1.16
 feedparser==5.2.1
 pandas==0.25.2
 lyricsgenius==2.0.2
-PySocks==1.7.1 
-beautifulsoup4==4.9.3 
+PySocks==1.7.1
+beautifulsoup4==4.9.3
 certifi==2020.12.5
 chardet==4.0.0
 idna==2.10
 lxml==4.6.2
 pytz==2020.5
-snscrape==0.3.5.dev93+g892941b
+# snscrape==0.3.5.dev93+g892941b
+snscrape
 soupsieve==2.1
 urllib3==1.26.2
