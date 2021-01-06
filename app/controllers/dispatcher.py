@@ -488,8 +488,10 @@ comm_svc = set(["sms", "email"])
 
 
 def dispatch(method_name: str, body: str, reg_num: str):
-    log(log.DEBUG, "dispatch")
+    log(log.DEBUG, "dispatch()")
     log(log.DEBUG, "method name: %s", method_name)
+    log(log.DEBUG, "body: %s", body)
+    log(log.DEBUG, "reg_num: %s", reg_num)
     method_name = method_name.lower()
     method_name_ident = Runner.service_ident(method_name).lower()
     if method_name_ident in MAP:

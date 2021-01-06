@@ -1,7 +1,7 @@
 import os
 import json
 
-from app.controllers.db_handler import DB1, DB_TEST	
+from app.controllers.db_handler import DB1, DB_TEST
 from app.models.vps import VPS
 
 from flask import Flask, make_response, current_app
@@ -45,9 +45,12 @@ def create_app(environment="development"):
     @app.errorhandler(Exception)
     def handle_error(ex):
         if isinstance(ex, exc.SQLAlchemyError):
+            log(log.ERROR, "Handled exc.SQLAlchemyError and throw out")
             raise ex
         if isinstance(ex, err.Error):
+            log(log.ERROR, "Handled err.Error and throw out")
             raise ex
+        log(log.ERROR, "Return error responce")
         error_dict = {
             'error': ex,
             "doc": ex.__doc__
