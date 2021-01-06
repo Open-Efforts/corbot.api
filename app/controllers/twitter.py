@@ -2,43 +2,39 @@ import re
 import requests
 from loguru import logger
 from sqlalchemy import *
-import twint
-
+import snscrape.modules.twitter as sntwitter
+import datetime
 
 class SVC_Twitter:
     @staticmethod
     def cmd_twitter(phrase, metadata, session):
         # phrase to be two parts: search by (keyword or username), the search argument
-        search_by = phrase.split(", ")[0]
-        keyword = phrase.split(", ")[1]
         try:
-            config = twint.Config()
-            if search_by == "username":
-                config.Username = keyword
-                body_text = "Tweets by: " + keyword + "\n"
-            else:
-                config.Search = keyword
-                body_text = "Tweets about: " + keyword + "\n"
-            config.Limit = 10  # running search
-            config.Hide_output = True
-            config.Store_object = True
-            twint.run.Search(config)
-            res = twint.output.tweets_list
-            if len(res) > 0:
-                limiter = 0
-                body_text = "Tweets:\n"
-                for tweet in res:
-                    print(tweet)
-                    limiter += 1
-                    if limiter == 6:
-                        break
-                    else:
-                        body_text += "Username: " + tweet.username
-                        body_text += "\nDate: " + tweet.datetime
-                        body_text += "\nTweet: " + tweet.tweet + "\n\n"
-            else:
-                body_text = "We didn't find any tweets about " + keyword + "."
+            search_by = phrase.split(", ")[0]
+            search_arg = phrase.split(", ")[1]
+            todays_date_str = datetime.today().strftime('%Y-%m-%d')
+            yesterdays_date = datetime.now() - timedelta(1)
+            yesterdays_date_str = datetime.strftime(yesterdays_date, '%Y-%m-%d')
+            if search_by == "keyword":
+                scrape_crit = f"{search_arg} since:{yesterdays_date_str} until:{todays_date_str}"
+                body_text = f"Tweets about {search_arg}:\n\n"
+
+            elif search_by == "username":
+                scrape_crit = f"from:{search_arg}"
+                body_text = f"Tweets by {search_arg}:\n\n"
+
+            # Using TwitterSearchScraper to scrape data and append tweets to list
+            for i, tweet in enumerate(sntwitter.TwitterSearchScraper(scrape_crit).get_items()):
+                # print(vars(tweet))
+                # print(vars(tweet.user))
+                if i > 9:
+                    break
+                date_str = tweet.date.strftime("%Y-%d-%m")
+                body_text += f"Name: {tweet.user.displayname} ({tweet.user.username})\n"
+                body_text += f"Date: {date_str}\n"
+                body_text += f"Tweet: {tweet.content}\n\n"
+
         except Exception as e:
-            print(e)
             body_text = "Error: " + str(e)
+        print(body_text)
         return body_text
