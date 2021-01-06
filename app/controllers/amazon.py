@@ -4,70 +4,77 @@ import requests
 import http
 from .google import SVC_Google
 import bs4 as BeautifulSoup
-from sqlalchemy import *
+from sqlalchemy import Table
 
 
 from app import metadata, session
 
 
 class SVC_Amazon:
-
     def cmd_amazon(phrase):
         try:
-            key_phrase = phrase.replace(' ', '+')
+            key_phrase = phrase.replace(" ", "+")
             conn = http.client.HTTPSConnection("get.scrapehero.com")
-            conn.request("GET", "/amz/keyword-search/?x-api-key=SXOFpa27z4vriRCOlfQC7IZOdxYWo9Xj&keyword=" +
-                         key_phrase + "&country_code=US")
+            conn.request(
+                "GET",
+                "/amz/keyword-search/?x-api-key=SXOFpa27z4vriRCOlfQC7IZOdxYWo9Xj&keyword="
+                + key_phrase
+                + "&country_code=US",
+            )
             res = conn.getresponse()
             data = res.read()
             json_data = json.loads(data.decode("utf-8"))
-            query = json_data['query']
-            results = json_data['search_results']
+            query = json_data["query"]
+            results = json_data["search_results"]
             end = chr(13) + chr(10)
             show = str(query) + end
             for row in results:
                 prod_data = dict(row)
-                show += 'Title: ' + prod_data['name'] + end
+                show += "Title: " + prod_data["name"] + end
                 try:
-                    show += 'Sale Price: ' + prod_data['sale_price'] + end
+                    show += "Sale Price: " + prod_data["sale_price"] + end
                 except:
                     pass
                 try:
-                    show += 'Regular Price: ' + \
-                        prod_data['regular_price'] + end
+                    show += "Regular Price: " + prod_data["regular_price"] + end
                 except:
                     pass
-                show += 'ASIN: ' + prod_data['asin'] + end
+                show += "ASIN: " + prod_data["asin"] + end
                 try:
-                    show += 'Reviews: ' + prod_data['review_count'] + end
+                    show += "Reviews: " + prod_data["review_count"] + end
                 except:
                     pass
                 try:
-                    show += 'Rating: ' + prod_data['rating'] + end
+                    show += "Rating: " + prod_data["rating"] + end
                 except:
                     pass
 
                 try:
                     link_code = SVC_Google.proc_link(
-                        prod_data['product_url'], metadata, session)
-                    show += 'Link: ' + link_code + end
-                    show += '..................................' + end
+                        prod_data["product_url"], metadata, session
+                    )
+                    show += "Link: " + link_code + end
+                    show += ".................................." + end
                 except:
                     pass
             text_out = show
         except Exception as E:
             end = chr(13) + chr(10)
             text_out = (
-                "Error: There are No Amazon Search Results for the Request Phrase: " + end
+                "Error: There are No Amazon Search Results for the Request Phrase: "
+                + end
             )
             text_out += "Request Phrase: " + phrase + end
-            text_out += "If you are sure of the spelling, please try your request again, if it fails again, please contact support." + phrase + end
+            text_out += (
+                "If you are sure of the spelling, please try your request again, if it fails again, please contact support."
+                + phrase
+                + end
+            )
         return text_out
 
     def search_str(phrase):
         phrase_txt = str(phrase)
-        fixed_phrase = phrase_txt.encode(
-            "ascii", errors="ignore").decode("ascii")
+        fixed_phrase = phrase_txt.encode("ascii", errors="ignore").decode("ascii")
         fixed_phrase = phrase_txt.replace(" ", "+")
         return fixed_phrase
 
@@ -83,8 +90,7 @@ class SVC_Amazon:
         fixed_text = fixed_text.replace(
             "Clicking an ad will take you to the product's page.", ""
         )
-        fixed_text = fixed_text.replace(
-            "Learn more about Sponsored Products.", "")
+        fixed_text = fixed_text.replace("Learn more about Sponsored Products.", "")
         fixed_text = fixed_text.replace("Sponsored", "")
         return fixed_text
 
@@ -206,7 +212,7 @@ class SVC_Amazon:
                 # check for "by" as first word
                 if temp_data.find("by") == 0:
                     # print("endpod0  " + str(endpos))
-                    temp_data = temp_data[endpos + 9:]
+                    temp_data = temp_data[endpos + 9 :]
                     temp_data = SVC_Amazon.strip_head(temp_data)
                     # print(temp_data)
                 # check for "by" after first word
@@ -301,14 +307,12 @@ class SVC_Amazon:
                         item_key, item_value = item_text.split(":")
                         prod_details[item_key] = item_value
                     try:
-                        amz_page_data["product_details_dict"] = str(
-                            prod_details)
+                        amz_page_data["product_details_dict"] = str(prod_details)
                         if debug_0 == True:
                             print("product details inserted" + str(prod_details))
                     except:
                         if debug_0 == True:
-                            print("product details insert failed" +
-                                  str(prod_details))
+                            print("product details insert failed" + str(prod_details))
                 except:
                     amz_page_data["product_details_dict"] = "No details available"
                     if debug_0 == True:
@@ -357,8 +361,7 @@ class SVC_Amazon:
                     "div", attrs={"id": "mediaTabsGroup", "class": "feature"}
                 )
                 # print("div content " + div_content.prettify())
-                ul_content = div_content.find(
-                    "ul", attrs={"id": "mediaTabs_tabSet"})
+                ul_content = div_content.find("ul", attrs={"id": "mediaTabs_tabSet"})
                 # print("ul content " + ul_content.prettify())
                 tab2 = True
                 # print("tab2 " + str(tab2))
@@ -395,8 +398,7 @@ class SVC_Amazon:
                             count = count + 1
                             # type of book
                             try:
-                                ele = item.find(
-                                    "a", attrs={"class": "a-button-text"})
+                                ele = item.find("a", attrs={"class": "a-button-text"})
                                 book_type = ele.span.text
                                 if book_type.find("Audiobook") > 0:
                                     book_type = "Audiobook"
@@ -404,14 +406,12 @@ class SVC_Amazon:
                                 pass
                             # price
                             try:
-                                ele = item.find(
-                                    "span", attrs={"class": "a-color-base"})
+                                ele = item.find("span", attrs={"class": "a-color-base"})
                                 # print("price1 ele: ")
-                                book_price = SVC_Amazon.strip_spaces(
-                                    ele.span.text)
+                                book_price = SVC_Amazon.strip_spaces(ele.span.text)
                                 startpos = book_price.find("$")
                                 book_price = SVC_Amazon.strip_spaces(
-                                    book_price[startpos: len(book_price)]
+                                    book_price[startpos : len(book_price)]
                                 )
                                 # print("price1 ele: " + book_price)
                             except:
@@ -422,8 +422,7 @@ class SVC_Amazon:
                                 ele = item.find(
                                     "a", attrs={"class": re.compile("a-size-mini*")}
                                 )
-                                book_price_alt = SVC_Amazon.strip_spaces(
-                                    ele.text)
+                                book_price_alt = SVC_Amazon.strip_spaces(ele.text)
                                 # print("price alt: " + book_price_alt)
                             except:
                                 # print("book price alt fail")
@@ -441,8 +440,7 @@ class SVC_Amazon:
                                 print("book insert crash")
                             # print("looping")
 
-                        amz_page_data["book_categories_dict"] = str(
-                            book_categories)
+                        amz_page_data["book_categories_dict"] = str(book_categories)
                     except:
                         print("book type 1 fail ")
                         pass
@@ -458,8 +456,7 @@ class SVC_Amazon:
                     "div", attrs={"id": "mediaTabsGroup", "class": "feature"}
                 )
                 # print("div content " + div_content.prettify())
-                ul_content = div_content.find(
-                    "ul", attrs={"id": "mediaTabs_tabSet"})
+                ul_content = div_content.find("ul", attrs={"id": "mediaTabs_tabSet"})
                 # print("ul content " + ul_content.prettify())
 
                 try:
@@ -522,8 +519,7 @@ class SVC_Amazon:
                             print("insert crash")
                     # print("looping")
                     # print("end for each")
-                    amz_page_data["book_categories_dict"] = str(
-                        book_categories)
+                    amz_page_data["book_categories_dict"] = str(book_categories)
                 except:
                     print("type2 fail")
                     pass
@@ -558,22 +554,19 @@ class SVC_Amazon:
                             count = count + 1
                             if debug_0 == True:
                                 print(
-                                    "book details inserted" +
-                                    str(recommend_details())
+                                    "book details inserted" + str(recommend_details())
                                 )
                         except:
                             if debug_0 == True:
                                 print("book details insert failed")
 
                     try:
-                        amz_page_data["recommend_books_dict"] = str(
-                            recommend_books)
+                        amz_page_data["recommend_books_dict"] = str(recommend_books)
                         if debug_0 == True:
                             print("product details inserted" + str(prod_details))
                     except:
                         if debug_0 == True:
-                            print("product details insert failed" +
-                                  str(prod_details))
+                            print("product details insert failed" + str(prod_details))
                 except:
                     amz_page_data["recommend_books_dict"] = "No details available"
                     if debug_0 == True:
@@ -585,8 +578,7 @@ class SVC_Amazon:
 
         # get star rating
         try:
-            div_content = body.find(
-                "div", attrs={"id": "averageCustomerReviews"})
+            div_content = body.find("div", attrs={"id": "averageCustomerReviews"})
             # print(div_content)
             temp_data = div_content.find(
                 "i", attrs={"class": re.compile("a-icon a-icon-star a-star*")}
@@ -630,7 +622,7 @@ class SVC_Amazon:
         stripped_string = ""
         if len(temp_data) < 2:
             return temp_data
-        for elem in temp_data[0: len(temp_data): 1]:
+        for elem in temp_data[0 : len(temp_data) : 1]:
             # print(ord(elem))
             if ord(elem) > 32 and ord(elem) <= 125:
                 stripped_string = stripped_string + elem
@@ -648,9 +640,9 @@ class SVC_Amazon:
             # print("stripping")
             if startpos > 0 and endpos > 0:
                 temp_data = (
-                    temp_data[0: startpos - 1]
+                    temp_data[0 : startpos - 1]
                     + " "
-                    + temp_data[endpos + 1: len(temp_data)]
+                    + temp_data[endpos + 1 : len(temp_data)]
                 )
                 # print("stripped")
         except:

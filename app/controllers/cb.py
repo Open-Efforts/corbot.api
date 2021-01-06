@@ -3,13 +3,12 @@ import re
 
 import pandas as pd
 from loguru import logger
-from sqlalchemy import *
+from sqlalchemy import Table
 
 from app import metadata, session
 
 
 class CB:
-
     def unparse_contact_name(subject: str):
         contact_name = None
         if (subject.find("[") >= 0) and (subject.find("]") >= 0):

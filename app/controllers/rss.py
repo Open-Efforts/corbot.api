@@ -1,5 +1,5 @@
 from loguru import logger
-from sqlalchemy import *
+from sqlalchemy import Table
 from .google import SVC_Google
 import feedparser
 
@@ -8,7 +8,6 @@ from app import metadata, session
 
 
 class SVC_RSS:
-
     def cmd_rss(arg):
         text_data = ""
         chan = str(arg)
@@ -63,8 +62,7 @@ class SVC_RSS:
                         pass
                     link_url = post.link
                     text_data += "URL: " + post.link + "[EOL]"
-                    link_code = SVC_Google.proc_link(
-                        link_url, metadata, session)
+                    link_code = SVC_Google.proc_link(link_url, metadata, session)
                     text_data += "Link Code: " + link_code + "[EOL]"
                     try:
                         summary = post.summary
@@ -105,7 +103,6 @@ class SVC_RSS:
         for channel in channel_list:
             chan_data = dict(channel)
             text_data += (
-                chan_data["feed_title"] +
-                " [" + str(chan_data["feed_id"]) + "]" + " | "
+                chan_data["feed_title"] + " [" + str(chan_data["feed_id"]) + "]" + " | "
             )
         return text_data

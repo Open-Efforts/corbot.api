@@ -1,6 +1,6 @@
 from app import metadata, session
 
-from sqlalchemy import *
+from sqlalchemy import Table
 from loguru import logger
 
 
@@ -20,13 +20,11 @@ class SVC_Account:
         account_data += "Name: " + client_name + "\r"
         account_data += "Number: " + reg_num + "\r"
         account_data += "Client ID: " + str(client_id) + "\r"
-        account_data += "Personal Email: " + \
-            client_data["email_address"] + "\r"
+        account_data += "Personal Email: " + client_data["email_address"] + "\r"
         account_data += "Account Type: " + plan_name + "\r"
         account_data += "Start Date: " + str(start_date) + "\r"
         # account_data += "Days Remaining: " + str(days_remaining) + "\r"
-        account_data += "Expiration Date: " + \
-            str(client_data["expire_date"]) + "\r\r"
+        account_data += "Expiration Date: " + str(client_data["expire_date"]) + "\r\r"
         # Show Account History
         account_data += "---------------- Account History ------------------ \r"
         account_data += SVC_Account.get_account_history(client_id, metadata)
@@ -68,7 +66,6 @@ class SVC_Account:
         account_data += "\r This is your account status page, you can request a copy of this page at any time by sending a request with Account in the subject line, and Status in the body."
         return subject, account_data
 
-
     def get_blocked(client_id, metadata):
         blocks = Table("blocks", metadata, autoload=True)
         qry = blocks.select().where(blocks.c.client_id == client_id)
@@ -87,7 +84,6 @@ class SVC_Account:
             logger.debug(show_row)
             block_list_text += str(show_row)
         return block_list_text
-
 
     def get_account_history(client_id, metadata):
         client_trans = Table("client_trans", metadata, autoload=True)
@@ -131,7 +127,6 @@ class SVC_Account:
             account_history = account_history + show
         return account_history
 
-
     def get_client_data(reg_num, metadata):
         clients = Table("clients", metadata, autoload=True)
         qry = clients.select().where(clients.c.reg_num == reg_num).limit(1)
@@ -140,7 +135,6 @@ class SVC_Account:
         for row in results:
             client_data = dict(row)
         return client_data
-
 
     def get_plan_data(plan_id, metadata):
         plans = Table("plans", metadata, autoload=True)
@@ -151,7 +145,6 @@ class SVC_Account:
         for row in results:
             plan_row = dict(row)
         return plan_row
-
 
     def get_balance(client_id, metadata):
         transactions = Table("transactions", metadata, autoload=True)
@@ -167,7 +160,6 @@ class SVC_Account:
         balance = "%.2f" % balance
         return balance
 
-
     def get_sms_out(client_id, metadata):
         sms_outbound = Table("sms_outbound", metadata, autoload=True)
         qry = (
@@ -181,7 +173,6 @@ class SVC_Account:
         for sms_msg in res:
             sms_list.append(sms_msg)
         return sms_list
-
 
     def get_sms_in(client_id, metadata):
         sms_inbound = Table("sms_inbound", metadata, autoload=True)

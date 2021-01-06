@@ -3,7 +3,7 @@ from datetime import timedelta
 import json
 import requests
 import pytz
-from sqlalchemy import *
+from sqlalchemy import Table
 
 from app import metadata, session
 
@@ -15,15 +15,29 @@ class SVC_Rundown:
         nfl_list = ["NFL", "nfl", "2", "nlf"]
         mlb_list = ["MLB", "3", "mlb", "mbl", "baseball"]
         nba_list = ["NBA", "nba", "4", "nab"]
-        ncaa_mens_bb_list = ["NCAA Men's Basketball",
-                             "ncaa mens basketball", "ncaa men's basketball", "5"]
+        ncaa_mens_bb_list = [
+            "NCAA Men's Basketball",
+            "ncaa mens basketball",
+            "ncaa men's basketball",
+            "5",
+        ]
         nhl_list = ["NHL", "6", "nhl", "nlh"]
         ufc_list = ["UFC/MMA", "7", "mma", "ufc", "ufc/mma", "mam", "ucf"]
         wnba_list = ["WNBA", "wnba", "8", "wbna"]
         cfl_list = ["CFL", "cfl", "clf", "9"]
         mls_ist = ["MLS", "10", "msl", "mls", "soccer"]
-        sport_dict = {"1": ncaa_foot_list, "2": nfl_list, "3": mlb_list, "4": nba_list,
-                      "5": ncaa_mens_bb_list, "6": nhl_list, "7": ufc_list, "8": wnba_list, "9": cfl_list, "10": mls_ist}
+        sport_dict = {
+            "1": ncaa_foot_list,
+            "2": nfl_list,
+            "3": mlb_list,
+            "4": nba_list,
+            "5": ncaa_mens_bb_list,
+            "6": nhl_list,
+            "7": ufc_list,
+            "8": wnba_list,
+            "9": cfl_list,
+            "10": mls_ist,
+        }
         sport_id = 0
         sport_name = ""
         for word in body_list:
@@ -56,7 +70,7 @@ class SVC_Rundown:
 
                 j_data = json.loads(r.text)
                 data = j_data["data"]
-                odds_info = '\n'
+                odds_info = "\n"
                 for date in data:
                     events = date["events"]
                     if len(events) > 0:
@@ -67,20 +81,25 @@ class SVC_Rundown:
 
                             # get date and time
                             game_data["event_date"] = event_data["event_date"]
-                            game_date = game_data["event_date"].split('T')[0]
+                            game_date = game_data["event_date"].split("T")[0]
                             game_date_date = datetime.datetime.strptime(
-                                game_date, "%Y-%m-%d")
-                            game_time = game_data["event_date"].split(
-                                'T')[1].replace(':00Z', '')
-                            game_time = datetime.datetime.strptime(
-                                game_time, "%H:%M")
+                                game_date, "%Y-%m-%d"
+                            )
+                            game_time = (
+                                game_data["event_date"]
+                                .split("T")[1]
+                                .replace(":00Z", "")
+                            )
+                            game_time = datetime.datetime.strptime(game_time, "%H:%M")
                             # function to see if its DST in CST
 
                             def is_dst(time_arg, tz_arg):
                                 tz_arg = pytz.timezone(tz_arg)
                                 tz_arg_aware_date = tz_arg.localize(
-                                    time_arg, is_dst=None)
+                                    time_arg, is_dst=None
+                                )
                                 return tz_arg_aware_date.tzinfo._dst.seconds != 0
+
                             if is_dst(game_date_date, "US/Central") == True:
                                 game_time = game_time - timedelta(hours=5)
                             else:
@@ -103,18 +122,23 @@ class SVC_Rundown:
                                 team_data0 = team_data[0]
                                 team_data1 = team_data[1]
                                 if team_data0["is_home"] is True:
-                                    game_data["home_name"] = team_data0["name"] + \
-                                        ' ' + team_data0["mascot"]
-                                    game_data["away_name"] = team_data1["name"] + \
-                                        ' ' + team_data1["mascot"]
+                                    game_data["home_name"] = (
+                                        team_data0["name"] + " " + team_data0["mascot"]
+                                    )
+                                    game_data["away_name"] = (
+                                        team_data1["name"] + " " + team_data1["mascot"]
+                                    )
                                 else:
-                                    game_data["home_name"] = team_data1["name"] + \
-                                        ' ' + team_data1["mascot"]
-                                    game_data["away_name"] = team_data0["name"] + \
-                                        ' ' + team_data0["mascot"]
+                                    game_data["home_name"] = (
+                                        team_data1["name"] + " " + team_data1["mascot"]
+                                    )
+                                    game_data["away_name"] = (
+                                        team_data0["name"] + " " + team_data0["mascot"]
+                                    )
 
-                            score_data["event_status"] = score_data["event_status"].split("_")[
-                                1].lower().title()
+                            score_data["event_status"] = (
+                                score_data["event_status"].split("_")[1].lower().title()
+                            )
 
                             aff_cnt = 1
                             if "lines" in event_data:
@@ -155,30 +179,62 @@ class SVC_Rundown:
 
                                         affiliate_names.append(aff_name)
                                         aff_cnt += 1
-                                        if spread_data["point_spread_home"] != "No data" and aff_cnt < 5:
+                                        if (
+                                            spread_data["point_spread_home"]
+                                            != "No data"
+                                            and aff_cnt < 5
+                                        ):
                                             home_spreads.append(
-                                                str(game_data["point_spread_home"]))
+                                                str(game_data["point_spread_home"])
+                                            )
                                         else:
                                             home_spreads.append(
-                                                str(game_data["point_spread_home"]))
-                                        if spread_data["point_spread_away"] != "No data" and aff_cnt < 5:
+                                                str(game_data["point_spread_home"])
+                                            )
+                                        if (
+                                            spread_data["point_spread_away"]
+                                            != "No data"
+                                            and aff_cnt < 5
+                                        ):
                                             away_spreads.append(
-                                                str(game_data["point_spread_away"]))
+                                                str(game_data["point_spread_away"])
+                                            )
                                         else:
                                             away_spreads.append(
-                                                str(game_data["point_spread_away"]))
+                                                str(game_data["point_spread_away"])
+                                            )
                                         if total_over != "No data" and aff_cnt < 5:
                                             total.append(str(total_over))
                                         else:
                                             total.append(str(total_over))
 
                             if game_date_date <= week_out:
-                                odds_info += ("Time: " + str(game_date) + " at " + str(game_time) + "\n" + "Home: " + game_data["home_name"] + " | Spread: " + home_spreads[0] + "\n"
-                                              "Away: " + game_data["away_name"] + " | Spread: " + away_spreads[0] + "\n" + "Over/Under: " + total[0] + '\n\n')
+                                odds_info += (
+                                    "Time: "
+                                    + str(game_date)
+                                    + " at "
+                                    + str(game_time)
+                                    + "\n"
+                                    + "Home: "
+                                    + game_data["home_name"]
+                                    + " | Spread: "
+                                    + home_spreads[0]
+                                    + "\n"
+                                    "Away: "
+                                    + game_data["away_name"]
+                                    + " | Spread: "
+                                    + away_spreads[0]
+                                    + "\n"
+                                    + "Over/Under: "
+                                    + total[0]
+                                    + "\n\n"
+                                )
 
             if len(odds_info) < 16:
                 msg_subject = "Sports: Error"
-                odds_info = "There is no event data for " + sport_name + " at this time."
+                odds_info = (
+                    "There is no event data for " + sport_name + " at this time."
+                )
             return msg_subject, odds_info
         except Exception as e:
             msg_subject = "Error"
@@ -230,15 +286,19 @@ class SVC_Rundown:
                         team_data0 = team_data[0]
                         team_data1 = team_data[1]
                         if team_data0["is_home"] is True:
-                            game_data["home_name"] = team_data0["name"] + \
-                                ' ' + team_data0["mascot"]
-                            game_data["away_name"] = team_data1["name"] + \
-                                ' ' + team_data1["mascot"]
+                            game_data["home_name"] = (
+                                team_data0["name"] + " " + team_data0["mascot"]
+                            )
+                            game_data["away_name"] = (
+                                team_data1["name"] + " " + team_data1["mascot"]
+                            )
                         else:
-                            game_data["home_name"] = team_data1["name"] + \
-                                ' ' + team_data1["mascot"]
-                            game_data["away_name"] = team_data0["name"] + \
-                                ' ' + team_data0["mascot"]
+                            game_data["home_name"] = (
+                                team_data1["name"] + " " + team_data1["mascot"]
+                            )
+                            game_data["away_name"] = (
+                                team_data0["name"] + " " + team_data0["mascot"]
+                            )
                     body_text += (
                         "Home: "
                         + game_data["home_name"]

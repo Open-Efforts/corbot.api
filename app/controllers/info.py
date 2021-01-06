@@ -1,4 +1,4 @@
-from sqlalchemy import *
+from sqlalchemy import Table
 
 from app import metadata
 

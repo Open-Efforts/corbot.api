@@ -2,7 +2,7 @@ import json
 import urllib
 from loguru import logger
 import requests
-from sqlalchemy import *
+from sqlalchemy import Table, insert
 import urllib.parse as make_url
 
 from app import metadata, session
@@ -83,8 +83,7 @@ class SVC_Google:
                         )
                     except:
                         ret_data += "Link Code: " + "[unavailable]" + "\r\n"
-                        logger.warning(
-                            "Could Not B36 Encode link: " + row["link"])
+                        logger.warning("Could Not B36 Encode link: " + row["link"])
                     ret_data += res_snippet + "\r\n"
                     ret_data += "\r\n"
                     cnt += 1

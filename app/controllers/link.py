@@ -8,7 +8,7 @@ import bs4 as BeautifulSoup
 import http
 from .google import SVC_Google
 from .twitter import SVC_Twitter
-from sqlalchemy import *
+from sqlalchemy import Table, insert
 
 
 from app import metadata, session
@@ -21,7 +21,7 @@ class SVC_Link:
         pos1 = str(code_or_url).find(",")
         if pos1 > 0:
             phrase = str(code_or_url)[:pos1]
-            page_count = str(code_or_url)[pos1 + 1:].strip()
+            page_count = str(code_or_url)[pos1 + 1 :].strip()
             try:
                 page_count = int(page_count)
                 logger.warning("Page Count Specified: " + str(page_count))
@@ -70,7 +70,7 @@ class SVC_Link:
                 link_url = link_row[2]
             logger.debug("Now fetching: " + link_code + " | " + link_url)
             file_ext_dot = link_url.rfind(".") + 1
-            file_ext = link_url[file_ext_dot: file_ext_dot + 3]
+            file_ext = link_url[file_ext_dot : file_ext_dot + 3]
             logger.debug("Filetype found: " + file_ext)
             if file_ext == "pdf":
                 logger.debug("PDF Filetype Detected. Aborting.")
@@ -106,23 +106,27 @@ class SVC_Link:
         if (pos1 >= 0) and (pos2 >= 0):
             logger.debug("Using Amazon Filter")
             # try to find asin to use api
-            asin = link_url[pos2+4:]
+            asin = link_url[pos2 + 4 :]
             pos1 = asin.find(r"/")
             asin = asin[:pos1]
 
             # ScrapeHero Code ----------------
             conn = http.client.HTTPSConnection("get.scrapehero.com")
             conn.request(
-                "GET", "/amz/product-details/?x-api-key=SXOFpa27z4vriRCOlfQC7IZOdxYWo9Xj&asin=" + asin + "&country_code=US")
+                "GET",
+                "/amz/product-details/?x-api-key=SXOFpa27z4vriRCOlfQC7IZOdxYWo9Xj&asin="
+                + asin
+                + "&country_code=US",
+            )
             res = conn.getresponse()
             data = res.read()
             json_data = json.loads(data.decode("utf-8"))
             prod_data = dict(json_data)
-            show = ''
-            end = '[EOL]' + chr(13) + chr(10)
+            show = ""
+            end = "[EOL]" + chr(13) + chr(10)
             for k, v in prod_data.items():
                 try:
-                    show += k + ': ' + v + end
+                    show += k + ": " + v + end
                 except:
                     pass
             amz_details = show
@@ -136,8 +140,7 @@ class SVC_Link:
             logger.debug("Not Using Filters")
             body_text = "URL: " + link_url + "\r\n"
             body_text += (
-                "Link Code: " + link_code + " \r\n" +
-                SVC_Link.to_text(link_text)
+                "Link Code: " + link_code + " \r\n" + SVC_Link.to_text(link_text)
             )
         return body_text, page_count
 
@@ -230,7 +233,7 @@ class SVC_Link:
         try:
             text = parser.handle(html_data)
         except Exception as e:
-            logger.warning('HTML2Text Failed')
+            logger.warning("HTML2Text Failed")
             logger.info(str(e))
             text = str(html_data)
         if rehtml:

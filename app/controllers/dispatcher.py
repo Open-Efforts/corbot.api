@@ -7,7 +7,7 @@ from app import metadata, session
 # import app.controllers.test  # noqa 401
 # import app.controllers.runner  # noqa 401
 from app.logger import log
-from sqlalchemy import *
+from sqlalchemy import Table, MetaData
 from imdb import IMDb
 from loguru import logger
 from .wiki import SVC_Wikipedia
@@ -553,4 +553,3 @@ def dispatch(method_name: str, body: str, reg_num: str):
             return dict(client_id=client_id, svc_feature="sms", expired=comm(client_id))
         else:
             raise NameError("Such service is not supported")
-

@@ -1,10 +1,9 @@
-from sqlalchemy import *
+from sqlalchemy import Table
 
 from app import metadata, session
 
 
 class Runner:
-
     def service_ident(msg_subject):
         subject = str(msg_subject)
         subject = subject.lower().strip()
