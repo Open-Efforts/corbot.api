@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 class SVC_Twitter:
     @staticmethod
-    def cmd_twitter(phrase, metadata, session):
+    def cmd_twitter(phrase):
         # phrase to be two parts: search by (keyword or username), the search argument
         try:
             search_by = phrase.split(", ")[0]
