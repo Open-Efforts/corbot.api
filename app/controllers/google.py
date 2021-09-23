@@ -1,3 +1,4 @@
+import os
 import json
 import urllib
 from loguru import logger
@@ -43,9 +44,8 @@ class SVC_Google:
         q = urllib.parse.quote(q)
         # q = urllib.parse.quote_plus(q)
         # logger.debug(q)
-        # key = 'AIzaSyDjMNvFbRptnZUt55zeh4MMukUS69aGrhI'
-        key = "AIzaSyBI3MiiEXEKNyPPfoCnGSq8W9TpSedhHeY"
-        cx = "001690443504898094366:n-vrnapnina"
+        key = os.environ.get("GOOGLE_KEY", None)
+        cx = os.environ.get("GOOGLE_CX", None)
         # cx = 'cb-api-1550765294709'
         base_url = "https://www.googleapis.com/customsearch/v1"
         new_url = base_url + "?key=" + key + "&cx=" + cx + "&q=" + q
